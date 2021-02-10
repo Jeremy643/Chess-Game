@@ -32,20 +32,28 @@ class Piece:
         for i in inc:
                 row_mult, col_mult = i
                 index = 1
+                check = False
                 while True:
                     r = index * row_mult
                     c = index * col_mult
                     if 0 <= self.row + r <= 7 and 0 <= self.col + c <= 7:
                         sq = board[self.row + r][self.col + c]
-                        if sq == 0:
+                        if sq == 0 and not check:
                             viable_moves[(self.row + r, self.col + c)] = MOVE
                             index += 1
-                        elif sq != 0 and sq.colour != self.colour:
+                        elif sq != 0 and sq.colour != self.colour and sq.piece_type != KING:
                             viable_moves[(self.row + r, self.col + c)] = TAKE
                             break
-                        elif sq != 0 and sq.colour == self.colour:
+                        elif sq != 0 and sq.colour != self.colour and sq.piece_type == KING:
+                            viable_moves[(self.row + r, self.col + c)] = TAKE
+                            check = True
+                            index += 1
+                        elif (sq != 0 and sq.colour == self.colour):
                             viable_moves[(self.row + r, self.col + c)] = GUARD
                             break
+                        elif check:
+                            viable_moves[(self.row + r, self.col + c)] = GUARD
+                            index += 1
                     else:
                         break
         return viable_moves
